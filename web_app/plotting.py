@@ -1,5 +1,8 @@
 import streamlit as st
-import plotly.express as px
+try:
+    import plotly.express as px
+except ImportError:
+    px = None
 import pandas as pd
 
 def create_sales_over_time_plot(df: pd.DataFrame, lang: str = 'русский') -> object:
@@ -27,6 +30,10 @@ def create_sales_over_time_plot(df: pd.DataFrame, lang: str = 'русский') 
     selected_lang = titles.get(lang, titles['русский'])
     
     # Создание линейного графика
+    if px is None:
+        st.error("Plotly не установлен. Пожалуйста, установите plotly для использования этой функции.")
+        return None
+        
     fig = px.line(
         daily_sales,
         x='Дата',
@@ -70,6 +77,10 @@ def create_city_sales_plot(df: pd.DataFrame, lang: str = 'русский') -> ob
     selected_lang = titles.get(lang, titles['русский'])
     
     # Создание столбчатого графика
+    if px is None:
+        st.error("Plotly не установлен. Пожалуйста, установите plotly для использования этой функции.")
+        return None
+        
     fig = px.bar(
         city_sales,
         x='Город',
@@ -158,6 +169,10 @@ def create_day_of_week_plot(df: pd.DataFrame, lang: str = 'русский') -> o
     selected_lang = titles.get(lang, titles['русский'])
     
     # Создание столбчатого графика
+    if px is None:
+        st.error("Plotly не установлен. Пожалуйста, установите plotly для использования этой функции.")
+        return None
+        
     fig = px.bar(
         dow_sales,
         x='ДеньНеделиЛок',
