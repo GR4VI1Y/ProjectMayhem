@@ -233,7 +233,11 @@ except:
     try:
         st.set_page_config(page_title=get_text(language, 'title'))
     except:
-        st.set_page_config(page_title="E-commerce Sales Analyzer")
+        try:
+            st.set_page_config(page_title="E-commerce Sales Analyzer")
+        except:
+            # Если все попытки установить конфигурацию страницы неудачны, просто продолжаем
+            pass
 
 st.title(get_text(language, 'title'))
 
