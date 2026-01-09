@@ -230,7 +230,10 @@ st.sidebar.header(get_text(language, 'sidebar_header'))
 try:
     st.set_page_config(page_title=get_text(language, 'title'), layout="wide")
 except:
-    st.set_page_config(page_title=get_text(language, 'title'))
+    try:
+        st.set_page_config(page_title=get_text(language, 'title'))
+    except:
+        st.set_page_config(page_title="E-commerce Sales Analyzer")
 
 st.title(get_text(language, 'title'))
 
