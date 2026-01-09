@@ -69,7 +69,13 @@ def get_text(lang, key):
             'faq_q7': 'Какие форматы файлов поддерживаются для загрузки?',
             'faq_a7': 'Приложение поддерживает загрузку файлов в формате CSV и Excel (.xlsx, .xls). Файл должен содержать колонки: \'Дата\', \'Город\', \'Имя\', \'Фамилия\', \'Сумма\', \'Валюта\'.',
             'nav_analysis': 'Анализ данных',
-            'nav_faq': 'FAQ'
+            'nav_faq': 'FAQ',
+            'date_col': 'Дата',
+            'city_col': 'Город',
+            'name_col': 'Имя',
+            'surname_col': 'Фамилия',
+            'amount_col': 'Сумма',
+            'currency_col': 'Валюта'
         },
         'английский': {
             'title': 'E-commerce Sales Analyzer',
@@ -133,7 +139,13 @@ def get_text(lang, key):
             'faq_q7': 'What file formats are supported for upload?',
             'faq_a7': 'The application supports uploading CSV and Excel (.xlsx, .xls) files. The file must contain columns: \'Date\', \'City\', \'Name\', \'Surname\', \'Amount\', \'Currency\'.',
             'nav_analysis': 'Data Analysis',
-            'nav_faq': 'FAQ'
+            'nav_faq': 'FAQ',
+            'date_col': 'Date',
+            'city_col': 'City',
+            'name_col': 'Name',
+            'surname_col': 'Surname',
+            'amount_col': 'Amount',
+            'currency_col': 'Currency'
         },
         'китайский': {
             'title': '电商销售分析器',
@@ -154,7 +166,7 @@ def get_text(lang, key):
             'period_data_header': '期间数据',
             'selected_period_sales': '（选定期间）',
             'all_period_sales': '（整个期间）',
-            'note_faq': '常见问题在单独的“FAQ”页面上，可通过侧边栏菜单访问。',
+            'note_faq': '常见问题在单独的"FAQ"页面上，可通过侧边栏菜单访问。',
             'error_file_not_found': '无法加载数据。请检查app文件夹中是否存在dataset_1.xlsx文件或上传自己的文件。',
             'error_missing_columns': '数据文件必须包含以下列：{}',
             'error_invalid_file': '仅支持CSV和Excel（.xlsx，.xls）文件',
@@ -197,7 +209,13 @@ def get_text(lang, key):
             'faq_q7': '支持哪些文件格式上传？',
             'faq_a7': '该应用程序支持上传CSV和Excel（.xlsx，.xls）文件。文件必须包含以下列：\'日期\'、\'城市\'、\'名字\'、\'姓氏\'、\'金额\'、\'货币\'。',
             'nav_analysis': '数据分析',
-            'nav_faq': '常见问题'
+            'nav_faq': '常见问题',
+            'date_col': '日期',
+            'city_col': '城市',
+            'name_col': '名字',
+            'surname_col': '姓氏',
+            'amount_col': '金额',
+            'currency_col': '货币'
         }
     }
     return translations.get(lang, translations['русский']).get(key, key)
@@ -226,10 +244,11 @@ else:
     
 # Проверка структуры данных
 if df is not None and not df.empty:
-    required_columns = ['Дата', 'Город', 'Имя', 'Фамилия', 'Сумма', 'Валюта']
-    missing_cols = [col for col in required_columns if col not in df.columns]
-    if missing_cols:
-        st.error(get_text(language, 'error_missing_columns').format(missing_cols))
+    # Проверяем наличие минимально необходимых колонок для расчета KPI
+    required_kpi_columns = ['Дата', 'Сумма']
+    missing_kpi_cols = [col for col in required_kpi_columns if col not in df.columns]
+    if missing_kpi_cols:
+        st.error(get_text(language, 'error_missing_columns').format(missing_kpi_cols))
         st.stop()
 
 if df is not None:
@@ -242,6 +261,15 @@ if df is not None:
     # Фильтрация данных по дате
     mask = (df['Дата'].dt.date >= start_date) & (df['Дата'].dt.date <= end_date)
     filtered_df = df.loc[mask]
+    
+    # Проверка наличия всех необходимых колонок для полноценной работы приложения
+    # Проверка уже выполнена в data_loader с переименованием альтернативных названий
+    # Здесь просто убедимся, что основные колонки для KPI присутствуют
+    required_kpi_columns = ['Дата', 'Сумма']
+    missing_cols = [col for col in required_kpi_columns if col not in df.columns]
+    if missing_cols:
+        # Вместо остановки приложения, показываем предупреждение
+        st.warning(f"Предупреждение: Отсутствуют колонки: {missing_cols}. Приложение не может работать без этих колонок.")
 
     # Получение уникальных городов для выбора
     unique_cities = sorted(filtered_df['Город'].unique())
@@ -339,7 +367,12 @@ if df is not None:
     # Отображение KPI метрик для выбранного периода
     col1, col2, col3 = st.columns(3)
     # Получаем валюту из данных (предполагаем, что все записи в выбранном периоде имеют одинаковую валюту)
-    currency = filtered_df['Валюта'].iloc[0] if not filtered_df.empty else 'RUB'
+    # Проверяем, существует ли колонка 'Валюта' перед обращением к ней
+    if 'Валюта' in filtered_df.columns and not filtered_df.empty:
+        currency = filtered_df['Валюта'].iloc[0]
+    else:
+        currency = 'RUB'  # Устанавливаем значение по умолчанию
+    
     col1.metric(get_text(language, 'total_sales'), f"{total_sales:,.2f}".replace(',', ' ') + f" {currency}")
     col2.metric(get_text(language, 'avg_daily_sales'), f"{avg_daily_sales:,.2f}".replace(',', ' ') + f" {currency}")
     col3.metric(get_text(language, 'max_daily_sales'), f"{max_daily_sales:,.2f}".replace(',', ' ') + f" {currency}")
@@ -355,7 +388,12 @@ if df is not None:
     # Отображение KPI метрик для всего периода (с учетом выбранного города)
     st.subheader(get_text(language, 'period_data_header'))
     col4, col5, col6 = st.columns(3)
-    currency_all = all_period_filtered['Валюта'].iloc[0] if not all_period_filtered.empty else 'RUB'
+    # Проверяем, существует ли колонка 'Валюта' перед обращением к ней
+    if 'Валюта' in all_period_filtered.columns and not all_period_filtered.empty:
+        currency_all = all_period_filtered['Валюта'].iloc[0]
+    else:
+        currency_all = 'RUB'  # Устанавливаем значение по умолчанию
+    
     col4.metric(get_text(language, 'total_sales'), f"{total_all_period:,.2f}".replace(',', ' ') + f" {currency_all}")
     col5.metric(get_text(language, 'avg_daily_sales'), f"{avg_all_period:,.2f}".replace(',', ' ') + f" {currency_all}")
     col6.metric(get_text(language, 'max_daily_sales'), f"{max_all_period:,.2f}".replace(',', ' ') + f" {currency_all}")
@@ -373,15 +411,20 @@ if df is not None:
     # Создаем копию данных для отображения с переводом заголовков колонок
     display_df = filtered_df.copy()
     
-    # Определяем, какие колонки нужно переименовать
-    column_mapping = {
-        'Дата': get_text(language, 'date_col'),
-        'Город': get_text(language, 'city_col'),
-        'Имя': get_text(language, 'name_col'),
-        'Фамилия': get_text(language, 'surname_col'),
-        'Сумма': get_text(language, 'amount_col'),
-        'Валюта': get_text(language, 'currency_col')
-    }
+    # Определяем, какие колонки нужно переименовать, проверяя их существование
+    column_mapping = {}
+    if 'Дата' in display_df.columns:
+        column_mapping['Дата'] = get_text(language, 'date_col')
+    if 'Город' in display_df.columns:
+        column_mapping['Город'] = get_text(language, 'city_col')
+    if 'Имя' in display_df.columns:
+        column_mapping['Имя'] = get_text(language, 'name_col')
+    if 'Фамилия' in display_df.columns:
+        column_mapping['Фамилия'] = get_text(language, 'surname_col')
+    if 'Сумма' in display_df.columns:
+        column_mapping['Сумма'] = get_text(language, 'amount_col')
+    if 'Валюта' in display_df.columns:
+        column_mapping['Валюта'] = get_text(language, 'currency_col')
     
     # Переименовываем колонки
     display_df.rename(columns=column_mapping, inplace=True)
