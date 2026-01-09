@@ -227,7 +227,10 @@ language = st.sidebar.selectbox(get_text('русский', 'select_language'), [
 st.sidebar.header(get_text(language, 'sidebar_header'))
 
 # Обновляем заголовок в соответствии с выбранным языком
-st.set_page_config(page_title=get_text(language, 'title'), layout="wide")
+try:
+    st.set_page_config(page_title=get_text(language, 'title'), layout="wide")
+except:
+    st.set_page_config(page_title=get_text(language, 'title'))
 
 st.title(get_text(language, 'title'))
 
