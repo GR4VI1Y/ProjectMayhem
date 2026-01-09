@@ -1,0 +1,28 @@
+Collecting streamlit==1.31.0
+  Using cached streamlit-1.31.0-py2.py3-none-any.whl.metadata (8.1 kB)
+Collecting pandas
+  Using cached pandas-2.3.3-cp314-cp314-win_amd64.whl.metadata (19 kB)
+Collecting plotly
+  Using cached plotly-6.5.1-py3-none-any.whl.metadata (8.5 kB)
+Collecting openpyxl
+  Using cached openpyxl-3.1.5-py2.py3-none-any.whl.metadata (2.5 kB)
+Collecting altair<6,>=4.0 (from streamlit==1.31.0)
+  Using cached altair-5.5.0-py3-none-any.whl.metadata (11 kB)
+Collecting blinker<2,>=1.0.0 (from streamlit==1.31.0)
+  Using cached blinker-1.9.0-py3-none-any.whl.metadata (1.6 kB)
+Collecting cachetools<6,>=4.0 (from streamlit==1.31.0)
+  Using cached cachetools-5.5.2-py3-none-any.whl.metadata (5.4 kB)
+Collecting click<9,>=7.0 (from streamlit==1.31.0)
+  Using cached click-8.3.1-py3-none-any.whl.metadata (2.6 kB)
+Collecting importlib-metadata<8,>=1.4 (from streamlit==1.31.0)
+  Using cached importlib_metadata-7.2.1-py3-none-any.whl.metadata (4.6 kB)
+Collecting numpy<2,>=1.19.3 (from streamlit==1.31.0)
+  Using cached numpy-1.26.4.tar.gz (15.8 MB)
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Installing backend dependencies: started
+  Installing backend dependencies: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'error'

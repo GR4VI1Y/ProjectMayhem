@@ -250,7 +250,7 @@ if uploaded_file is not None:
     if df is not None:
         st.sidebar.success(get_text(language, 'upload_success'))
 else:
-    df = load_data("../app/dataset_1.xlsx")
+    df = load_data("app/dataset_1.xlsx")
     
 # Проверка структуры данных
 if df is not None and not df.empty:
