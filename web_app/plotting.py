@@ -16,12 +16,19 @@ def create_sales_over_time_plot(df: pd.DataFrame, lang: str = 'русский') 
     Returns:
         Объект Plotly с графиком
     """
-    # Агрегирование данных по датам с суммированием продаж
-    daily_sales = df.groupby(df['Дата'].dt.date)['Сумма'].sum().reset_index()
-    daily_sales.columns = ['Дата', 'Сумма']
+    # Явно преобразуем дату в тип date и создаем копию DataFrame для безопасности
+    df_copy = df.copy()
+    df_copy['Дата_только'] = df_copy['Дата'].dt.date
     
-    # Убедимся, что дата отсортирована по возрастанию для правильного отображения графика
-    daily_sales = daily_sales.sort_values('Дата').reset_index(drop=True)
+    # Группируем по дате и суммируем продажи, убедившись, что используем только 'Сумма'
+    daily_sales_grouped = df_copy.groupby('Дата_только')['Сумма'].sum().reset_index()
+    daily_sales_grouped.columns = ['Дата', 'Сумма']
+    
+    # Сортируем по дате
+    daily_sales_sorted = daily_sales_grouped.sort_values('Дата').reset_index(drop=True)
+    
+    # Проверяем результат агрегации
+    print(f"DEBUG: Результат агрегации - строки: {len(daily_sales_sorted)}, пример значений: {daily_sales_sorted.head()}")
     
     # Переводы для графика
     titles = {
@@ -32,22 +39,24 @@ def create_sales_over_time_plot(df: pd.DataFrame, lang: str = 'русский') 
     
     selected_lang = titles.get(lang, titles['русский'])
     
-    # Создание линейного графика
+    # Создание линейного графика с использованием явных данных
     if px is None:
         st.error("Plotly не установлен. Пожалуйста, установите plotly для использования этой функции.")
         return None
         
     fig = px.line(
-        daily_sales,
-        x='Дата',
-        y='Сумма',
+        x=daily_sales_sorted['Дата'],
+        y=daily_sales_sorted['Сумма'],
         title=selected_lang['title'],
-        labels={'Дата': selected_lang['x_axis'], 'Сумма': selected_lang['y_axis']},
+        labels={'x': selected_lang['x_axis'], 'y': selected_lang['y_axis']},
         markers=True
     )
     
-    # Убедимся, что график использует только предоставленные значения, без дополнительной агрегации
-    fig.update_traces(mode='lines+markers')
+    # Настройка осей и меток
+    fig.update_xaxes(title_text=selected_lang['x_axis'])
+    fig.update_yaxes(title_text=selected_lang['y_axis'])
+    
+    return fig
     
     # Настройка внешнего вида графика
     fig.update_layout(
