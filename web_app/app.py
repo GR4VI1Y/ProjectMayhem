@@ -375,7 +375,7 @@ if df is not None:
         total_all_period, avg_all_period, max_all_period = 0, 0, 0
 
     # Добавляем заголовок для первой группы метрик
-    st.subheader(get_text(language, 'selected_period_sales'))
+    st.markdown(f'<h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">{get_text(language, "selected_period_sales")}</h3>', unsafe_allow_html=True)
     
     # Отображение KPI метрик для выбранного периода с использованием CSS Grid для выравнивания
     # Получаем валюту из данных (предполагаем, что все записи в выбранном периоде имеют одинаковую валюту)
