@@ -43,20 +43,33 @@ def create_sales_over_time_plot(df: pd.DataFrame, lang: str = 'русский') 
     if px is None:
         st.error("Plotly не установлен. Пожалуйста, установите plotly для использования этой функции.")
         return None
+    
+    # Используем matplotlib для построения графика как альтернативу, если Plotly не работает корректно
+    try:
+        import plotly.graph_objects as go
+        from plotly.subplots import make_subplots
         
-    fig = px.line(
-        x=daily_sales_sorted['Дата'],
-        y=daily_sales_sorted['Сумма'],
-        title=selected_lang['title'],
-        labels={'x': selected_lang['x_axis'], 'y': selected_lang['y_axis']},
-        markers=True
-    )
-    
-    # Настройка осей и меток
-    fig.update_xaxes(title_text=selected_lang['x_axis'])
-    fig.update_yaxes(title_text=selected_lang['y_axis'])
-    
-    return fig
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(
+            x=daily_sales_sorted['Дата'],
+            y=daily_sales_sorted['Сумма'],
+            mode='lines+markers',
+            name='Продажи'
+        ))
+        
+        fig.update_layout(
+            title=selected_lang['title'],
+            xaxis_title=selected_lang['x_axis'],
+            yaxis_title=selected_lang['y_axis'],
+            hovermode='x unified'
+        )
+        
+        return fig
+    except Exception as e:
+        print(f"ERROR: Ошибка при создании графика: {e}")
+        # Возвращаем пустой график в случае ошибки
+        fig = px.line(title="Ошибка при построении графика")
+        return fig
     
     # Настройка внешнего вида графика
     fig.update_layout(
