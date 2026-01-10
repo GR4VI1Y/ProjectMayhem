@@ -28,7 +28,10 @@ def create_sales_over_time_plot(df: pd.DataFrame, lang: str = 'русский') 
     daily_sales_sorted = daily_sales_grouped.sort_values('Дата').reset_index(drop=True)
     
     # Проверяем результат агрегации
-    print(f"DEBUG: Результат агрегации - строки: {len(daily_sales_sorted)}, пример значений: {daily_sales_sorted.head()}")
+    print(f"DEBUG create_sales_over_time_plot: Результат агрегации - строки: {len(daily_sales_sorted)}, пример значений:")
+    print(daily_sales_sorted.head())
+    print(f"Типы данных: {daily_sales_sorted.dtypes}")
+    print(f"Колонки: {daily_sales_sorted.columns.tolist()}")
     
     # Переводы для графика
     titles = {
@@ -49,9 +52,11 @@ def create_sales_over_time_plot(df: pd.DataFrame, lang: str = 'русский') 
         import plotly.graph_objects as go
         
         fig = go.Figure()
+        # Преобразуем значения в числовой тип для уверенности
+        y_values = pd.to_numeric(daily_sales_sorted['Сумма'], errors='coerce')
         fig.add_trace(go.Scatter(
             x=daily_sales_sorted['Дата'],
-            y=daily_sales_sorted['Сумма'],
+            y=y_values,
             mode='lines+markers',
             name='Продажи'
         ))
@@ -189,6 +194,10 @@ def create_day_of_week_plot(df: pd.DataFrame, lang: str = 'русский') -> o
     # Сортируем по порядку дней недели, заполняя отсутствующие дни нулями
     dow_sales_grouped = dow_sales_grouped.set_index('ДеньНеделиЛок').reindex(ordered_days, fill_value=0).reset_index()
     dow_sales_grouped.columns = ['ДеньНеделиЛок', 'Сумма']
+    print(f"DEBUG create_day_of_week_plot: Результат агрегации - строки: {len(dow_sales_clean)}, пример значений:")
+    print(dow_sales_clean.head())
+    print(f"Типы данных: {dow_sales_clean.dtypes}")
+    print(f"Колонки: {dow_sales_clean.columns.tolist()}")
     dow_sales_clean = dow_sales_grouped  # Убираем dropna, так как теперь все дни присутствуют
     
     # Переводы для графика
@@ -206,8 +215,11 @@ def create_day_of_week_plot(df: pd.DataFrame, lang: str = 'русский') -> o
         return None
         
     try:
+        # Преобразуем значения в числовой тип для уверенности
+        dow_sales_clean_for_plot = dow_sales_clean.copy()
+        dow_sales_clean_for_plot['Сумма'] = pd.to_numeric(dow_sales_clean_for_plot['Сумма'], errors='coerce')
         fig = px.bar(
-            dow_sales_clean,
+            dow_sales_clean_for_plot,
             x='ДеньНеделиЛок',
             y='Сумма',
             title=selected_lang['title'],
@@ -216,8 +228,11 @@ def create_day_of_week_plot(df: pd.DataFrame, lang: str = 'русский') -> o
     except Exception as e:
         print(f"ERROR: Ошибка при создании графика по дням недели: {e}")
         # Возвращаем график с использованием px.bar с правильными данными в случае ошибки
+        # Преобразуем значения в числовой тип для уверенности в обработке ошибок
+        dow_sales_clean_error = dow_sales_clean.copy()
+        dow_sales_clean_error['Сумма'] = pd.to_numeric(dow_sales_clean_error['Сумма'], errors='coerce')
         fig = px.bar(
-            dow_sales_clean,
+            dow_sales_clean_error,
             x='ДеньНеделиЛок',
             y='Сумма',
             title=f"{selected_lang['title']} - ОШИБКА ОТЛАДКИ"
