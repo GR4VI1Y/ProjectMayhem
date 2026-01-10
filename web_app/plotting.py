@@ -19,19 +19,25 @@ def create_sales_over_time_plot(df: pd.DataFrame, lang: str = 'русский') 
     Returns:
         Объект Plotly с графиком
     """
+    print(f"DEBUG create_sales_over_time_plot: входящий DataFrame - {len(df)} строк, колонки: {list(df.columns)}")
+    print(f"Пример входных данных: {df[['Дата', 'Сумма']].head()}")
+    
     # Создаем копию DataFrame для безопасности
     df_copy = df.copy()
     
     # Преобразуем дату к формату date
-    df_copy['Дата_только'] = df_copy['Дата'].dt.date
+    df_copy['date_only'] = df_copy['Дата'].dt.date
+    print(f"DEBUG: после добавления 'date_only' - пример: {df_copy[['Дата', 'date_only', 'Сумма']].head()}")
     
     # Группируем по дате и суммируем продажи
-    grouped_data = df_copy.groupby('Дата_только')['Сумма'].agg('sum').reset_index()
-    grouped_data = grouped_data.rename(columns={'Дата_только': 'Дата'})
-    grouped_data = grouped_data.sort_values('Дата').reset_index(drop=True)
+    grouped_data = df_copy.groupby('date_only')['Сумма'].agg('sum').reset_index()
+    print(f"DEBUG: после groupby и agg - {len(grouped_data)} строк, пример: {grouped_data.head()}")
     
-    print(f"DEBUG create_sales_over_time_plot: данные для графика - {len(grouped_data)} строк")
-    print(f"Пример значений: {grouped_data[['Дата', 'Сумма']].head()}")
+    # Переименовываем колонки с уникальными именами, чтобы избежать конфликта
+    grouped_data = grouped_data.rename(columns={'date_only': 'plot_date', 'Сумма': 'plot_amount'})
+    grouped_data = grouped_data.sort_values('plot_date').reset_index(drop=True)
+    print(f"DEBUG: после сортировки - пример: {grouped_data[['plot_date', 'plot_amount']].head()}")
+    print(f"DEBUG: типы данных - {grouped_data.dtypes}")
     
     # Определяем заголовки в зависимости от языка
     titles = {
@@ -48,8 +54,8 @@ def create_sales_over_time_plot(df: pd.DataFrame, lang: str = 'русский') 
     
     fig = go.Figure()
     fig.add_trace(go.Scatter(
-        x=grouped_data['Дата'],
-        y=grouped_data['Сумма'],
+        x=grouped_data['plot_date'],
+        y=grouped_data['plot_amount'],
         mode='lines+markers',
         name='Продажи'
     ))
@@ -121,6 +127,9 @@ def create_day_of_week_plot(df: pd.DataFrame, lang: str = 'русский') -> o
     Returns:
         Объект Plotly с графиком
     """
+    print(f"DEBUG create_day_of_week_plot: входящий DataFrame - {len(df)} строк, колонки: {list(df.columns)}")
+    print(f"Пример входных данных: {df[['Дата', 'Сумма']].head()}")
+    
     # Создаем копию DataFrame для безопасности
     df_copy = df.copy()
     
@@ -158,8 +167,9 @@ def create_day_of_week_plot(df: pd.DataFrame, lang: str = 'русский') -> o
     selected_mapping = day_mapping.get(lang, day_mapping['русский'])
     
     # Добавляем колонку с днями недели
-    df_copy['ДеньНедели'] = df_copy['Дата'].dt.day_name()
-    df_copy['ДеньНеделиЛок'] = df_copy['ДеньНедели'].map(selected_mapping)
+    df_copy['day_of_week_eng'] = df_copy['Дата'].dt.day_name()
+    df_copy['day_of_week_local'] = df_copy['day_of_week_eng'].map(selected_mapping)
+    print(f"DEBUG: пример сопоставления дней недели: {df_copy[['Дата', 'day_of_week_eng', 'day_of_week_local', 'Сумма']].head()}")
     
     # Создаем полный список дней недели в правильном порядке
     ordered_days = [
@@ -173,10 +183,13 @@ def create_day_of_week_plot(df: pd.DataFrame, lang: str = 'русский') -> o
     ]
     
     # Группируем по дням недели и суммируем продажи
-    dow_sales = df_copy.groupby('ДеньНеделиЛок')['Сумма'].agg('sum').reindex(ordered_days, fill_value=0).reset_index()
+    grouped_by_day = df_copy.groupby('day_of_week_local')['Сумма'].agg('sum')
+    print(f"DEBUG: результат groupby до reindex - {len(grouped_by_day)} строк: {grouped_by_day}")
     
-    print(f"DEBUG create_day_of_week_plot: данные для графика - {len(dow_sales)} строк")
-    print(f"Пример значений: {dow_sales[['ДеньНеделиЛок', 'Сумма']].head()}")
+    # Используем reindex для правильного порядка дней недели
+    dow_sales = grouped_by_day.reindex(ordered_days, fill_value=0).reset_index()
+    dow_sales = dow_sales.rename(columns={'day_of_week_local': 'plot_day', 'Сумма': 'plot_amount'})
+    print(f"DEBUG: результат после reindex - {len(dow_sales)} строк, пример: {dow_sales}")
     
     # Переводы для графика
     titles = {
@@ -194,8 +207,8 @@ def create_day_of_week_plot(df: pd.DataFrame, lang: str = 'русский') -> o
     
     fig = go.Figure()
     fig.add_trace(go.Bar(
-        x=dow_sales['ДеньНеделиЛок'],
-        y=dow_sales['Сумма'],
+        x=dow_sales['plot_day'],
+        y=dow_sales['plot_amount'],
         name='Продажи'
     ))
     
