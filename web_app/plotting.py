@@ -1,8 +1,10 @@
 import streamlit as st
 try:
     import plotly.express as px
+    import plotly.graph_objects as go
 except ImportError:
     px = None
+    go = None
 import pandas as pd
 
 
@@ -24,12 +26,12 @@ def create_sales_over_time_plot(df: pd.DataFrame, lang: str = 'русский') 
     df_copy['Дата_только'] = df_copy['Дата'].dt.date
     
     # Группируем по дате и суммируем продажи
-    grouped_data = df_copy.groupby('Дата_только')['Сумма'].sum().reset_index()
+    grouped_data = df_copy.groupby('Дата_только')['Сумма'].agg('sum').reset_index()
     grouped_data = grouped_data.rename(columns={'Дата_только': 'Дата'})
     grouped_data = grouped_data.sort_values('Дата').reset_index(drop=True)
     
-    # Проверяем данные
-    print(f"DEBUG create_sales_over_time_plot: Кол-во строк: {len(grouped_data)}, пример: {grouped_data.head()}")
+    print(f"DEBUG create_sales_over_time_plot: данные для графика - {len(grouped_data)} строк")
+    print(f"Пример значений: {grouped_data[['Дата', 'Сумма']].head()}")
     
     # Определяем заголовки в зависимости от языка
     titles = {
@@ -39,15 +41,21 @@ def create_sales_over_time_plot(df: pd.DataFrame, lang: str = 'русский') 
     }
     selected_title = titles.get(lang, titles['русский'])
     
-    # Создаем график
-    fig = px.line(
-        grouped_data,
-        x='Дата',
-        y='Сумма',
-        title=selected_title['title']
-    )
+    # Создаем график с явным указанием данных для осей
+    if go is None:
+        st.error("Plotly не установлен. Пожалуйста, установите plotly для использования этой функции.")
+        return None
+    
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(
+        x=grouped_data['Дата'],
+        y=grouped_data['Сумма'],
+        mode='lines+markers',
+        name='Продажи'
+    ))
     
     fig.update_layout(
+        title=selected_title['title'],
         xaxis_title=selected_title['x_axis'],
         yaxis_title=selected_title['y_axis'],
         hovermode='x unified'
@@ -68,7 +76,7 @@ def create_city_sales_plot(df: pd.DataFrame, lang: str = 'русский') -> ob
         Объект Plotly с графиком
     """
     # Агрегирование данных по городам
-    city_sales = df.groupby('Город')['Сумма'].sum().reset_index()
+    city_sales = df.groupby('Город')['Сумма'].agg('sum').reset_index()
     city_sales = city_sales.sort_values('Сумма', ascending=False)
     
     # Переводы для графика
@@ -153,8 +161,8 @@ def create_day_of_week_plot(df: pd.DataFrame, lang: str = 'русский') -> o
     df_copy['ДеньНедели'] = df_copy['Дата'].dt.day_name()
     df_copy['ДеньНеделиЛок'] = df_copy['ДеньНедели'].map(selected_mapping)
     
-    # Группируем по дням недели и суммируем продажи
-    dow_sales = df_copy.groupby('ДеньНеделиЛок')['Сумма'].sum().reindex([
+    # Создаем полный список дней недели в правильном порядке
+    ordered_days = [
         selected_mapping['Monday'],
         selected_mapping['Tuesday'],
         selected_mapping['Wednesday'],
@@ -162,10 +170,13 @@ def create_day_of_week_plot(df: pd.DataFrame, lang: str = 'русский') -> o
         selected_mapping['Friday'],
         selected_mapping['Saturday'],
         selected_mapping['Sunday']
-    ], fill_value=0).reset_index()
+    ]
     
-    # Проверяем данные
-    print(f"DEBUG create_day_of_week_plot: Кол-во строк: {len(dow_sales)}, пример: {dow_sales.head()}")
+    # Группируем по дням недели и суммируем продажи
+    dow_sales = df_copy.groupby('ДеньНеделиЛок')['Сумма'].agg('sum').reindex(ordered_days, fill_value=0).reset_index()
+    
+    print(f"DEBUG create_day_of_week_plot: данные для графика - {len(dow_sales)} строк")
+    print(f"Пример значений: {dow_sales[['ДеньНеделиЛок', 'Сумма']].head()}")
     
     # Переводы для графика
     titles = {
@@ -176,20 +187,20 @@ def create_day_of_week_plot(df: pd.DataFrame, lang: str = 'русский') -> o
     
     selected_title = titles.get(lang, titles['русский'])
     
-    # Создание столбчатого графика
-    if px is None:
+    # Создаем график с явным указанием данных для осей
+    if go is None:
         st.error("Plotly не установлен. Пожалуйста, установите plotly для использования этой функции.")
         return None
-        
-    fig = px.bar(
-        dow_sales,
-        x='ДеньНеделиЛок',
-        y='Сумма',
-        title=selected_title['title']
-    )
     
-    # Настройка внешнего вида графика
+    fig = go.Figure()
+    fig.add_trace(go.Bar(
+        x=dow_sales['ДеньНеделиЛок'],
+        y=dow_sales['Сумма'],
+        name='Продажи'
+    ))
+    
     fig.update_layout(
+        title=selected_title['title'],
         xaxis_title=selected_title['x_axis'],
         yaxis_title=selected_title['y_axis']
     )
