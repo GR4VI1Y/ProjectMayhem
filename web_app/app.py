@@ -385,18 +385,18 @@ if df is not None:
     # Создаем контейнер с CSS Grid для выравнивания метрик
     st.markdown(f"""
     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-        <div style="text-align: center; border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; background-color: #f9f9f9;">
-            <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; height: 3em; display: flex; align-items: center; justify-content: center;">{get_text(language, 'total_sales')}</div>
+        <div style="text-align: center; padding: 15px;">
+            <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; height: 3em; display: flex; align-items: center; justify-content: center; color: #333;">{get_text(language, 'total_sales')}</div>
             <div style="font-size: 24px; font-weight: bold; margin: 10px 0; color: #1f1f1f;">{f'{total_sales:,.2f}'.replace(',', ' ')}</div>
             <div style="color: green; font-size: 16px; margin-top: 5px;">{currency}</div>
         </div>
-        <div style="text-align: center; border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; background-color: #f9f9f9;">
-            <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; height: 3em; display: flex; align-items: center; justify-content: center;">{get_text(language, 'avg_daily_sales')}</div>
+        <div style="text-align: center; padding: 15px;">
+            <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; height: 3em; display: flex; align-items: center; justify-content: center; color: #333;">{get_text(language, 'avg_daily_sales')}</div>
             <div style="font-size: 24px; font-weight: bold; margin: 10px 0; color: #1f1f1f;">{f'{avg_daily_sales:,.2f}'.replace(',', ' ')}</div>
             <div style="color: green; font-size: 16px; margin-top: 5px;">{currency}</div>
         </div>
-        <div style="text-align: center; border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; background-color: #f9f9f9;">
-            <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; height: 3em; display: flex; align-items: center; justify-content: center;">{get_text(language, 'max_daily_sales')}</div>
+        <div style="text-align: center; padding: 15px;">
+            <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; height: 3em; display: flex; align-items: center; justify-content: center; color: #333;">{get_text(language, 'max_daily_sales')}</div>
             <div style="font-size: 24px; font-weight: bold; margin: 10px 0; color: #1f1f1f;">{f'{max_daily_sales:,.2f}'.replace(',', ' ')}</div>
             <div style="color: green; font-size: 16px; margin-top: 5px;">{currency}</div>
         </div>
@@ -425,18 +425,18 @@ if df is not None:
     # Создаем контейнер с CSS Grid для выравнивания метрик
     st.markdown(f"""
     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-        <div style="text-align: center; border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; background-color: #f9f9f9;">
-            <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; height: 3em; display: flex; align-items: center; justify-content: center;">{get_text(language, 'total_sales')}</div>
+        <div style="text-align: center; padding: 15px;">
+            <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; height: 3em; display: flex; align-items: center; justify-content: center; color: #333;">{get_text(language, 'total_sales')}</div>
             <div style="font-size: 24px; font-weight: bold; margin: 10px 0; color: #1f1f1f;">{f'{total_all_period:,.2f}'.replace(',', ' ')}</div>
             <div style="color: green; font-size: 16px; margin-top: 5px;">{currency_all}</div>
         </div>
-        <div style="text-align: center; border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; background-color: #f9f9f9;">
-            <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; height: 3em; display: flex; align-items: center; justify-content: center;">{get_text(language, 'avg_daily_sales')}</div>
+        <div style="text-align: center; padding: 15px;">
+            <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; height: 3em; display: flex; align-items: center; justify-content: center; color: #333;">{get_text(language, 'avg_daily_sales')}</div>
             <div style="font-size: 24px; font-weight: bold; margin: 10px 0; color: #1f1f1f;">{f'{avg_all_period:,.2f}'.replace(',', ' ')}</div>
             <div style="color: green; font-size: 16px; margin-top: 5px;">{currency_all}</div>
         </div>
-        <div style="text-align: center; border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; background-color: #f9f9f9;">
-            <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; height: 3em; display: flex; align-items: center; justify-content: center;">{get_text(language, 'max_daily_sales')}</div>
+        <div style="text-align: center; padding: 15px;">
+            <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; height: 3em; display: flex; align-items: center; justify-content: center; color: #333;">{get_text(language, 'max_daily_sales')}</div>
             <div style="font-size: 24px; font-weight: bold; margin: 10px 0; color: #1f1f1f;">{f'{max_all_period:,.2f}'.replace(',', ' ')}</div>
             <div style="color: green; font-size: 16px; margin-top: 5px;">{currency_all}</div>
         </div>
