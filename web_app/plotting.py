@@ -70,15 +70,6 @@ def create_sales_over_time_plot(df: pd.DataFrame, lang: str = 'русский') 
         # Возвращаем пустой график в случае ошибки
         fig = px.line(title="Ошибка при построении графика")
         return fig
-    
-    # Настройка внешнего вида графика
-    fig.update_layout(
-        xaxis_title=selected_lang['x_axis'],
-        yaxis_title=selected_lang['y_axis'],
-        hovermode='x unified'
-    )
-    
-    return fig
 
 def create_city_sales_plot(df: pd.DataFrame, lang: str = 'русский') -> object:
     """
@@ -207,10 +198,11 @@ def create_day_of_week_plot(df: pd.DataFrame, lang: str = 'русский') -> o
         return None
         
     fig = px.bar(
-        x=dow_sales_clean['ДеньНеделиЛок'],
-        y=dow_sales_clean['Сумма'],
+        dow_sales_clean,
+        x='ДеньНеделиЛок',
+        y='Сумма',
         title=selected_lang['title'],
-        labels={'x': selected_lang['x_axis'], 'y': selected_lang['y_axis']}
+        labels={'ДеньНеделиЛок': selected_lang['x_axis'], 'Сумма': selected_lang['y_axis']}
     )
     
     # Настройка внешнего вида графика
