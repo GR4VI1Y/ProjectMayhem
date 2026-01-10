@@ -44,10 +44,9 @@ def create_sales_over_time_plot(df: pd.DataFrame, lang: str = 'русский') 
         st.error("Plotly не установлен. Пожалуйста, установите plotly для использования этой функции.")
         return None
     
-    # Используем matplotlib для построения графика как альтернативу, если Plotly не работает корректно
+    # Используем plotly.graph_objects для построения графика
     try:
         import plotly.graph_objects as go
-        from plotly.subplots import make_subplots
         
         fig = go.Figure()
         fig.add_trace(go.Scatter(
@@ -67,8 +66,13 @@ def create_sales_over_time_plot(df: pd.DataFrame, lang: str = 'русский') 
         return fig
     except Exception as e:
         print(f"ERROR: Ошибка при создании графика: {e}")
-        # Возвращаем пустой график в случае ошибки
-        fig = px.line(title="Ошибка при построении графика")
+        # Возвращаем график с использованием px.line с правильными данными в случае ошибки
+        fig = px.line(
+            daily_sales_sorted,
+            x='Дата',
+            y='Сумма',
+            title=f"{selected_lang['title']} - ОШИБКА ОТЛАДКИ"
+        )
         return fig
 
 def create_city_sales_plot(df: pd.DataFrame, lang: str = 'русский') -> object:
@@ -169,7 +173,10 @@ def create_day_of_week_plot(df: pd.DataFrame, lang: str = 'русский') -> o
     df_copy['ДеньНеделиЛок'] = df_copy['ДеньНедели'].map(selected_mapping)
     
     # Явно группируем по дням недели и суммируем продажи
-    dow_sales_grouped = df_copy.groupby('ДеньНеделиЛок')['Сумма'].sum().reindex([
+    dow_sales_grouped = df_copy.groupby('ДеньНеделиЛок')['Сумма'].sum().reset_index()
+    
+    # Создаем полный список дней недели в правильном порядке
+    ordered_days = [
         selected_mapping['Monday'],
         selected_mapping['Tuesday'],
         selected_mapping['Wednesday'],
@@ -177,11 +184,12 @@ def create_day_of_week_plot(df: pd.DataFrame, lang: str = 'русский') -> o
         selected_mapping['Friday'],
         selected_mapping['Saturday'],
         selected_mapping['Sunday']
-    ]).reset_index()
+    ]
     
-    # Переименовываем колонки
+    # Сортируем по порядку дней недели, заполняя отсутствующие дни нулями
+    dow_sales_grouped = dow_sales_grouped.set_index('ДеньНеделиЛок').reindex(ordered_days, fill_value=0).reset_index()
     dow_sales_grouped.columns = ['ДеньНеделиЛок', 'Сумма']
-    dow_sales_clean = dow_sales_grouped.dropna()  # Удаление NaN значений
+    dow_sales_clean = dow_sales_grouped  # Убираем dropna, так как теперь все дни присутствуют
     
     # Переводы для графика
     titles = {
@@ -197,13 +205,24 @@ def create_day_of_week_plot(df: pd.DataFrame, lang: str = 'русский') -> o
         st.error("Plotly не установлен. Пожалуйста, установите plotly для использования этой функции.")
         return None
         
-    fig = px.bar(
-        dow_sales_clean,
-        x='ДеньНеделиЛок',
-        y='Сумма',
-        title=selected_lang['title'],
-        labels={'ДеньНеделиЛок': selected_lang['x_axis'], 'Сумма': selected_lang['y_axis']}
-    )
+    try:
+        fig = px.bar(
+            dow_sales_clean,
+            x='ДеньНеделиЛок',
+            y='Сумма',
+            title=selected_lang['title'],
+            labels={'ДеньНеделиЛок': selected_lang['x_axis'], 'Сумма': selected_lang['y_axis']}
+        )
+    except Exception as e:
+        print(f"ERROR: Ошибка при создании графика по дням недели: {e}")
+        # Возвращаем график с использованием px.bar с правильными данными в случае ошибки
+        fig = px.bar(
+            dow_sales_clean,
+            x='ДеньНеделиЛок',
+            y='Сумма',
+            title=f"{selected_lang['title']} - ОШИБКА ОТЛАДКИ"
+        )
+        return fig
     
     # Настройка внешнего вида графика
     fig.update_xaxes(title_text=selected_lang['x_axis'])
