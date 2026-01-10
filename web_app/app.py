@@ -375,7 +375,7 @@ if df is not None:
         total_all_period, avg_all_period, max_all_period = 0, 0, 0
 
     # Добавляем заголовок для первой группы метрик
-    st.markdown(f'<h3 style="margin-top: 0.7rem; margin-bottom: 0.3rem;">{get_text(language, "selected_period_sales")}</h3>', unsafe_allow_html=True)
+    st.markdown(f'<h3 style="margin-top: 0.5rem; margin-bottom: 0.2rem;">{get_text(language, "selected_period_sales")}</h3>', unsafe_allow_html=True)
     
     # Отображение KPI метрик для выбранного периода с использованием CSS Grid для выравнивания
     # Получаем валюту из данных (предполагаем, что все записи в выбранном периоде имеют одинаковую валюту)
@@ -418,7 +418,7 @@ if df is not None:
     
     # Отображение KPI метрик для всего периода (с учетом выбранного города)
     # Используем тот же стиль, что и для заголовка "Данные по выбранному периоду"
-    st.markdown(f'<h3 style="margin-top: 0.3rem; margin-bottom: 0.3rem;">{get_text(language, "all_period_sales")}</h3>', unsafe_allow_html=True)
+    st.markdown(f'<h3 style="margin-top: 0.2rem; margin-bottom: 0.2rem;">{get_text(language, "all_period_sales")}</h3>', unsafe_allow_html=True)
     
     # Проверяем, существует ли колонка 'Валюта' перед обращением к ней
     if 'Валюта' in all_period_filtered.columns and not all_period_filtered.empty:
