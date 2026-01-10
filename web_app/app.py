@@ -417,7 +417,8 @@ if df is not None:
     st.markdown("</div>", unsafe_allow_html=True)
     
     # Отображение KPI метрик для всего периода (с учетом выбранного города)
-    st.subheader(get_text(language, 'all_period_sales'))
+    # Используем тот же стиль, что и для заголовка "Данные по выбранному периоду"
+    st.markdown(f'<h3 style="margin-top: 2rem; margin-bottom: 1rem;">{get_text(language, "all_period_sales")}</h3>', unsafe_allow_html=True)
     
     # Проверяем, существует ли колонка 'Валюта' перед обращением к ней
     if 'Валюта' in all_period_filtered.columns and not all_period_filtered.empty:
