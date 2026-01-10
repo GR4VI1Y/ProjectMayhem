@@ -384,11 +384,11 @@ if df is not None:
         currency = 'RUB'  # Устанавливаем значение по умолчанию
     
     # Отображаем метрики без стрелок, только значение и валюта под ним, с выравниванием
-    col1.write(f"<div style='text-align: center;'><h4 style='margin-bottom: 10px;'>{get_text(language, 'total_sales')}</h4><div style='font-size: 24px; font-weight: bold; margin: 5px 0;'>{f'{total_sales:,.2f}'.replace(',', ' ')}</div><div style='color: green; font-size: 16px; margin-top: 5px;'>{currency}</div></div>", unsafe_allow_html=True)
+    col1.write(f"<div style='text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 120px;'><h4 style='margin: 0 10px 0; font-size: 16px;'>{get_text(language, 'total_sales')}</h4><div style='font-size: 24px; font-weight: bold; margin: 5px 0; flex-grow: 1; display: flex; align-items: center; justify-content: center;'>{f'{total_sales:,.2f}'.replace(',', ' ')}</div><div style='color: green; font-size: 16px; margin-top: 5px;'>{currency}</div></div>", unsafe_allow_html=True)
     
-    col2.write(f"<div style='text-align: center;'><h4 style='margin-bottom: 10px;'>{get_text(language, 'avg_daily_sales')}</h4><div style='font-size: 24px; font-weight: bold; margin: 5px 0;'>{f'{avg_daily_sales:,.2f}'.replace(',', ' ')}</div><div style='color: green; font-size: 16px; margin-top: 5px;'>{currency}</div></div>", unsafe_allow_html=True)
+    col2.write(f"<div style='text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 120px;'><h4 style='margin: 0 0 10px 0; font-size: 16px;'>{get_text(language, 'avg_daily_sales')}</h4><div style='font-size: 24px; font-weight: bold; margin: 5px 0; flex-grow: 1; display: flex; align-items: center; justify-content: center;'>{f'{avg_daily_sales:,.2f}'.replace(',', ' ')}</div><div style='color: green; font-size: 16px; margin-top: 5px;'>{currency}</div></div>", unsafe_allow_html=True)
     
-    col3.write(f"<div style='text-align: center;'><h4 style='margin-bottom: 10px;'>{get_text(language, 'max_daily_sales')}</h4><div style='font-size: 24px; font-weight: bold; margin: 5px 0;'>{f'{max_daily_sales:,.2f}'.replace(',', ' ')}</div><div style='color: green; font-size: 16px; margin-top: 5px;'>{currency}</div></div>", unsafe_allow_html=True)
+    col3.write(f"<div style='text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 120px;'><h4 style='margin: 0 0 10px 0; font-size: 16px;'>{get_text(language, 'max_daily_sales')}</h4><div style='font-size: 24px; font-weight: bold; margin: 5px 0; flex-grow: 1; display: flex; align-items: center; justify-content: center;'>{f'{max_daily_sales:,.2f}'.replace(',', ' ')}</div><div style='color: green; font-size: 16px; margin-top: 5px;'>{currency}</div></div>", unsafe_allow_html=True)
 
     # Фильтрация данных по городу для всего периода (независимо от даты)
     all_period_filtered = df.copy()
@@ -408,11 +408,11 @@ if df is not None:
         currency_all = 'RUB'  # Устанавливаем значение по умолчанию
     
     # Отображаем метрики без стрелок, только значение и валюта под ним, с выравниванием
-    col4.write(f"<div style='text-align: center;'><h4 style='margin-bottom: 10px;'>{get_text(language, 'total_sales')}</h4><div style='font-size: 24px; font-weight: bold; margin: 5px 0;'>{f'{total_all_period:,.2f}'.replace(',', ' ')}</div><div style='color: green; font-size: 16px; margin-top: 5px;'>{currency_all}</div></div>", unsafe_allow_html=True)
+    col4.write(f"<div style='text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 120px;'><h4 style='margin: 0 10px 0; font-size: 16px;'>{get_text(language, 'total_sales')}</h4><div style='font-size: 24px; font-weight: bold; margin: 5px 0; flex-grow: 1; display: flex; align-items: center; justify-content: center;'>{f'{total_all_period:,.2f}'.replace(',', ' ')}</div><div style='color: green; font-size: 16px; margin-top: 5px;'>{currency_all}</div></div>", unsafe_allow_html=True)
     
-    col5.write(f"<div style='text-align: center;'><h4 style='margin-bottom: 10px;'>{get_text(language, 'avg_daily_sales')}</h4><div style='font-size: 24px; font-weight: bold; margin: 5px 0;'>{f'{avg_all_period:,.2f}'.replace(',', ' ')}</div><div style='color: green; font-size: 16px; margin-top: 5px;'>{currency_all}</div></div>", unsafe_allow_html=True)
+    col5.write(f"<div style='text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 120px;'><h4 style='margin: 0 0 10px 0; font-size: 16px;'>{get_text(language, 'avg_daily_sales')}</h4><div style='font-size: 24px; font-weight: bold; margin: 5px 0; flex-grow: 1; display: flex; align-items: center; justify-content: center;'>{f'{avg_all_period:,.2f}'.replace(',', ' ')}</div><div style='color: green; font-size: 16px; margin-top: 5px;'>{currency_all}</div></div>", unsafe_allow_html=True)
     
-    col6.write(f"<div style='text-align: center;'><h4 style='margin-bottom: 10px;'>{get_text(language, 'max_daily_sales')}</h4><div style='font-size: 24px; font-weight: bold; margin: 5px 0;'>{f'{max_all_period:,.2f}'.replace(',', ' ')}</div><div style='color: green; font-size: 16px; margin-top: 5px;'>{currency_all}</div></div>", unsafe_allow_html=True)
+    col6.write(f"<div style='text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 120px;'><h4 style='margin: 0 0 10px 0; font-size: 16px;'>{get_text(language, 'max_daily_sales')}</h4><div style='font-size: 24px; font-weight: bold; margin: 5px 0; flex-grow: 1; display: flex; align-items: center; justify-content: center;'>{f'{max_all_period:,.2f}'.replace(',', ' ')}</div><div style='color: green; font-size: 16px; margin-top: 5px;'>{currency_all}</div></div>", unsafe_allow_html=True)
 
     # Визуализация данных
     if filtered_df.empty:
