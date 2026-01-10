@@ -387,20 +387,20 @@ if df is not None:
     
     # Создаем контейнер с CSS Grid для выравнивания метрик
     st.markdown(f"""
-    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 10px;">
         <div style="text-align: center; padding: 15px;">
             <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; height: 3em; display: flex; align-items: center; justify-content: center; color: white;">{get_text(language, 'total_sales')}</div>
-            <div style="font-size: 24px; font-weight: bold; margin: 10px 0; color: white;">{f'{total_sales:,.2f}'.replace(',', ' ')}</div>
+            <div style="font-size: 24px; font-weight: bold; margin: 5px 0; color: white;">{f'{total_sales:,.2f}'.replace(',', ' ')}</div>
             <div style="color: green; font-size: 16px; margin-top: 5px;">{currency}</div>
         </div>
         <div style="text-align: center; padding: 15px;">
             <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; height: 3em; display: flex; align-items: center; justify-content: center; color: white;">{get_text(language, 'avg_daily_sales')}</div>
-            <div style="font-size: 24px; font-weight: bold; margin: 10px 0; color: white;">{f'{avg_daily_sales:,.2f}'.replace(',', ' ')}</div>
+            <div style="font-size: 24px; font-weight: bold; margin: 5px 0; color: white;">{f'{avg_daily_sales:,.2f}'.replace(',', ' ')}</div>
             <div style="color: green; font-size: 16px; margin-top: 5px;">{currency}</div>
         </div>
         <div style="text-align: center; padding: 15px;">
             <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; height: 3em; display: flex; align-items: center; justify-content: center; color: white;">{get_text(language, 'max_daily_sales')}</div>
-            <div style="font-size: 24px; font-weight: bold; margin: 10px 0; color: white;">{f'{max_daily_sales:,.2f}'.replace(',', ' ')}</div>
+            <div style="font-size: 24px; font-weight: bold; margin: 5px 0; color: white;">{f'{max_daily_sales:,.2f}'.replace(',', ' ')}</div>
             <div style="color: green; font-size: 16px; margin-top: 5px;">{currency}</div>
         </div>
     """, unsafe_allow_html=True)
