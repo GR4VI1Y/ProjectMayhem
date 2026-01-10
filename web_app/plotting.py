@@ -124,9 +124,11 @@ def create_day_of_week_plot(df: pd.DataFrame, lang: str = 'русский') -> o
     Returns:
         Объект Plotly с графиком
     """
-    # Добавление колонки с днями недели
-    df_with_dow = df.copy()
-    df_with_dow['ДеньНедели'] = df_with_dow['Дата'].dt.day_name()
+    # Создаем копию DataFrame для безопасности
+    df_copy = df.copy()
+    
+    # Добавляем колонку с днями недели
+    df_copy['ДеньНедели'] = df_copy['Дата'].dt.day_name()
     
     # Соответствие дней недели на разных языках
     day_mapping = {
@@ -160,10 +162,10 @@ def create_day_of_week_plot(df: pd.DataFrame, lang: str = 'русский') -> o
     }
     
     selected_mapping = day_mapping.get(lang, day_mapping['русский'])
-    df_with_dow['ДеньНеделиЛок'] = df_with_dow['ДеньНедели'].map(selected_mapping)
+    df_copy['ДеньНеделиЛок'] = df_copy['ДеньНедели'].map(selected_mapping)
     
-    # Агрегирование данных по дням недели
-    dow_sales = df_with_dow.groupby('ДеньНеделиЛок')['Сумма'].sum().reindex([
+    # Явно группируем по дням недели и суммируем продажи
+    dow_sales_grouped = df_copy.groupby('ДеньНеделиЛок')['Сумма'].sum().reindex([
         selected_mapping['Monday'],
         selected_mapping['Tuesday'],
         selected_mapping['Wednesday'],
@@ -172,7 +174,10 @@ def create_day_of_week_plot(df: pd.DataFrame, lang: str = 'русский') -> o
         selected_mapping['Saturday'],
         selected_mapping['Sunday']
     ]).reset_index()
-    dow_sales = dow_sales.dropna()  # Удаление NaN значений
+    
+    # Переименовываем колонки
+    dow_sales_grouped.columns = ['ДеньНеделиЛок', 'Сумма']
+    dow_sales_clean = dow_sales_grouped.dropna()  # Удаление NaN значений
     
     # Переводы для графика
     titles = {
@@ -183,23 +188,20 @@ def create_day_of_week_plot(df: pd.DataFrame, lang: str = 'русский') -> o
     
     selected_lang = titles.get(lang, titles['русский'])
     
-    # Создание столбчатого графика
+    # Создание столбчатого графика с использованием явных данных
     if px is None:
         st.error("Plotly не установлен. Пожалуйста, установите plotly для использования этой функции.")
         return None
         
     fig = px.bar(
-        dow_sales,
-        x='ДеньНеделиЛок',
-        y='Сумма',
+        x=dow_sales_clean['ДеньНеделиЛок'],
+        y=dow_sales_clean['Сумма'],
         title=selected_lang['title'],
-        labels={'ДеньНеделиЛок': selected_lang['x_axis'], 'Сумма': selected_lang['y_axis']}
+        labels={'x': selected_lang['x_axis'], 'y': selected_lang['y_axis']}
     )
     
     # Настройка внешнего вида графика
-    fig.update_layout(
-        xaxis_title=selected_lang['x_axis'],
-        yaxis_title=selected_lang['y_axis']
-    )
+    fig.update_xaxes(title_text=selected_lang['x_axis'])
+    fig.update_yaxes(title_text=selected_lang['y_axis'])
     
     return fig
