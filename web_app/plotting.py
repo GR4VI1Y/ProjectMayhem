@@ -20,6 +20,9 @@ def create_sales_over_time_plot(df: pd.DataFrame, lang: str = 'русский') 
     daily_sales = df.groupby(df['Дата'].dt.date)['Сумма'].sum().reset_index()
     daily_sales.columns = ['Дата', 'Сумма']
     
+    # Убедимся, что дата отсортирована по возрастанию для правильного отображения графика
+    daily_sales = daily_sales.sort_values('Дата').reset_index(drop=True)
+    
     # Переводы для графика
     titles = {
         'русский': {'title': 'Продажи по дням', 'x_axis': 'Дата', 'y_axis': 'Сумма продаж'},
