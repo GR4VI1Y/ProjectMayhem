@@ -23,9 +23,9 @@ def get_text(lang, key):
             'day_of_week_sales': 'Продажи по дням недели',
             'selected_period_data': 'Данные за выбранный период',
             'data_table_title': 'Таблица данных за выбранный период',
-            'period_data_header': 'Данные по периоду',
-            'selected_period_sales': ' (выбранный период)',
-            'all_period_sales': ' (весь период)',
+            'period_data_header': 'Данные по всему периоду',
+            'selected_period_sales': 'Данные по выбранному периоду',
+            'all_period_sales': 'Данные по всему периоду',
             'note_faq': 'Часто задаваемые вопросы находятся на отдельной странице \'FAQ\', доступной через боковое меню.',
             'error_file_not_found': 'Не удалось загрузить данные. Пожалуйста, проверьте наличие файла dataset_1.xlsx в папке app или загрузите свой файл.',
             'error_missing_columns': 'Файл данных должен содержать следующие колонки: {}',
@@ -93,9 +93,9 @@ def get_text(lang, key):
             'day_of_week_sales': 'Sales by Day of Week',
             'selected_period_data': 'Data for Selected Period',
             'data_table_title': 'Selected Period Data Table',
-            'period_data_header': 'Period Data',
-            'selected_period_sales': ' (selected period)',
-            'all_period_sales': ' (entire period)',
+            'period_data_header': 'Data for Entire Period',
+            'selected_period_sales': 'Data for Selected Period',
+            'all_period_sales': 'Data for Entire Period',
             'note_faq': 'Frequently asked questions are on a separate \'FAQ\' page accessible through the sidebar menu.',
             'error_file_not_found': 'Failed to load data. Please check if dataset_1.xlsx file exists in the app folder or upload your own file.',
             'error_missing_columns': 'Data file must contain the following columns: {}',
@@ -163,9 +163,9 @@ def get_text(lang, key):
             'day_of_week_sales': '按星期划分的销售额',
             'selected_period_data': '选定期间的数据',
             'data_table_title': '选定期间数据表',
-            'period_data_header': '期间数据',
-            'selected_period_sales': '（选定期间）',
-            'all_period_sales': '（整个期间）',
+            'period_data_header': '整个期间的数据',
+            'selected_period_sales': '选定期间的数据',
+            'all_period_sales': '整个期间的数据',
             'note_faq': '常见问题在单独的"FAQ"页面上，可通过侧边栏菜单访问。',
             'error_file_not_found': '无法加载数据。请检查app文件夹中是否存在dataset_1.xlsx文件或上传自己的文件。',
             'error_missing_columns': '数据文件必须包含以下列：{}',
@@ -374,6 +374,9 @@ if df is not None:
         # Если данных нет, устанавливаем значения по умолчанию
         total_all_period, avg_all_period, max_all_period = 0, 0, 0
 
+    # Добавляем заголовок для первой группы метрик
+    st.subheader(get_text(language, 'selected_period_sales'))
+    
     # Отображение KPI метрик для выбранного периода с использованием CSS Grid для выравнивания
     # Получаем валюту из данных (предполагаем, что все записи в выбранном периоде имеют одинаковую валюту)
     # Проверяем, существует ли колонка 'Валюта' перед обращением к ней
@@ -386,18 +389,18 @@ if df is not None:
     st.markdown(f"""
     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
         <div style="text-align: center; padding: 15px;">
-            <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; height: 3em; display: flex; align-items: center; justify-content: center; color: #333;">{get_text(language, 'total_sales')}</div>
-            <div style="font-size: 24px; font-weight: bold; margin: 10px 0; color: #1f1f1f;">{f'{total_sales:,.2f}'.replace(',', ' ')}</div>
+            <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; height: 3em; display: flex; align-items: center; justify-content: center; color: white;">{get_text(language, 'total_sales')}</div>
+            <div style="font-size: 24px; font-weight: bold; margin: 10px 0; color: white;">{f'{total_sales:,.2f}'.replace(',', ' ')}</div>
             <div style="color: green; font-size: 16px; margin-top: 5px;">{currency}</div>
         </div>
         <div style="text-align: center; padding: 15px;">
-            <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; height: 3em; display: flex; align-items: center; justify-content: center; color: #333;">{get_text(language, 'avg_daily_sales')}</div>
-            <div style="font-size: 24px; font-weight: bold; margin: 10px 0; color: #1f1f1f;">{f'{avg_daily_sales:,.2f}'.replace(',', ' ')}</div>
+            <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; height: 3em; display: flex; align-items: center; justify-content: center; color: white;">{get_text(language, 'avg_daily_sales')}</div>
+            <div style="font-size: 24px; font-weight: bold; margin: 10px 0; color: white;">{f'{avg_daily_sales:,.2f}'.replace(',', ' ')}</div>
             <div style="color: green; font-size: 16px; margin-top: 5px;">{currency}</div>
         </div>
         <div style="text-align: center; padding: 15px;">
-            <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; height: 3em; display: flex; align-items: center; justify-content: center; color: #333;">{get_text(language, 'max_daily_sales')}</div>
-            <div style="font-size: 24px; font-weight: bold; margin: 10px 0; color: #1f1f1f;">{f'{max_daily_sales:,.2f}'.replace(',', ' ')}</div>
+            <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; height: 3em; display: flex; align-items: center; justify-content: center; color: white;">{get_text(language, 'max_daily_sales')}</div>
+            <div style="font-size: 24px; font-weight: bold; margin: 10px 0; color: white;">{f'{max_daily_sales:,.2f}'.replace(',', ' ')}</div>
             <div style="color: green; font-size: 16px; margin-top: 5px;">{currency}</div>
         </div>
     """, unsafe_allow_html=True)
@@ -414,7 +417,7 @@ if df is not None:
     st.markdown("</div>", unsafe_allow_html=True)
     
     # Отображение KPI метрик для всего периода (с учетом выбранного города)
-    st.subheader(get_text(language, 'period_data_header'))
+    st.subheader(get_text(language, 'all_period_sales'))
     
     # Проверяем, существует ли колонка 'Валюта' перед обращением к ней
     if 'Валюта' in all_period_filtered.columns and not all_period_filtered.empty:
@@ -426,18 +429,18 @@ if df is not None:
     st.markdown(f"""
     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
         <div style="text-align: center; padding: 15px;">
-            <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; height: 3em; display: flex; align-items: center; justify-content: center; color: #333;">{get_text(language, 'total_sales')}</div>
-            <div style="font-size: 24px; font-weight: bold; margin: 10px 0; color: #1f1f1f;">{f'{total_all_period:,.2f}'.replace(',', ' ')}</div>
+            <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; height: 3em; display: flex; align-items: center; justify-content: center; color: white;">{get_text(language, 'total_sales')}</div>
+            <div style="font-size: 24px; font-weight: bold; margin: 10px 0; color: white;">{f'{total_all_period:,.2f}'.replace(',', ' ')}</div>
             <div style="color: green; font-size: 16px; margin-top: 5px;">{currency_all}</div>
         </div>
         <div style="text-align: center; padding: 15px;">
-            <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; height: 3em; display: flex; align-items: center; justify-content: center; color: #333;">{get_text(language, 'avg_daily_sales')}</div>
-            <div style="font-size: 24px; font-weight: bold; margin: 10px 0; color: #1f1f1f;">{f'{avg_all_period:,.2f}'.replace(',', ' ')}</div>
+            <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; height: 3em; display: flex; align-items: center; justify-content: center; color: white;">{get_text(language, 'avg_daily_sales')}</div>
+            <div style="font-size: 24px; font-weight: bold; margin: 10px 0; color: white;">{f'{avg_all_period:,.2f}'.replace(',', ' ')}</div>
             <div style="color: green; font-size: 16px; margin-top: 5px;">{currency_all}</div>
         </div>
         <div style="text-align: center; padding: 15px;">
-            <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; height: 3em; display: flex; align-items: center; justify-content: center; color: #333;">{get_text(language, 'max_daily_sales')}</div>
-            <div style="font-size: 24px; font-weight: bold; margin: 10px 0; color: #1f1f1f;">{f'{max_all_period:,.2f}'.replace(',', ' ')}</div>
+            <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; height: 3em; display: flex; align-items: center; justify-content: center; color: white;">{get_text(language, 'max_daily_sales')}</div>
+            <div style="font-size: 24px; font-weight: bold; margin: 10px 0; color: white;">{f'{max_all_period:,.2f}'.replace(',', ' ')}</div>
             <div style="color: green; font-size: 16px; margin-top: 5px;">{currency_all}</div>
         </div>
     </div>
