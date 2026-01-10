@@ -1,9 +1,7 @@
 import streamlit as st
 try:
-    import plotly.express as px
     import plotly.graph_objects as go
 except ImportError:
-    px = None
     go = None
 import pandas as pd
 
@@ -19,25 +17,19 @@ def create_sales_over_time_plot(df: pd.DataFrame, lang: str = 'русский') 
     Returns:
         Объект Plotly с графиком
     """
-    print(f"DEBUG create_sales_over_time_plot: входящий DataFrame - {len(df)} строк, колонки: {list(df.columns)}")
-    print(f"Пример входных данных: {df[['Дата', 'Сумма']].head()}")
-    
     # Создаем копию DataFrame для безопасности
     df_copy = df.copy()
     
     # Преобразуем дату к формату date
     df_copy['date_only'] = df_copy['Дата'].dt.date
-    print(f"DEBUG: после добавления 'date_only' - пример: {df_copy[['Дата', 'date_only', 'Сумма']].head()}")
     
     # Группируем по дате и суммируем продажи
-    grouped_data = df_copy.groupby('date_only')['Сумма'].agg('sum').reset_index()
-    print(f"DEBUG: после groupby и agg - {len(grouped_data)} строк, пример: {grouped_data.head()}")
-    
-    # Переименовываем колонки с уникальными именами, чтобы избежать конфликта
+    grouped_data = df_copy.groupby('date_only')['Сумма'].sum().reset_index()
     grouped_data = grouped_data.rename(columns={'date_only': 'plot_date', 'Сумма': 'plot_amount'})
     grouped_data = grouped_data.sort_values('plot_date').reset_index(drop=True)
-    print(f"DEBUG: после сортировки - пример: {grouped_data[['plot_date', 'plot_amount']].head()}")
-    print(f"DEBUG: типы данных - {grouped_data.dtypes}")
+    
+    # ВАЖНО: Проверяем, что данные содержат правильные значения
+    print(f"DEBUG create_sales_over_time_plot: кол-во строк={len(grouped_data)}, пример значений plot_amount={grouped_data['plot_amount'].head().tolist()}")
     
     # Определяем заголовки в зависимости от языка
     titles = {
@@ -52,10 +44,16 @@ def create_sales_over_time_plot(df: pd.DataFrame, lang: str = 'русский') 
         st.error("Plotly не установлен. Пожалуйста, установите plotly для использования этой функции.")
         return None
     
+    # ВАЖНО: Убедимся, что передаем правильные массивы данных
+    x_values = grouped_data['plot_date'].tolist()
+    y_values = grouped_data['plot_amount'].tolist()
+    
+    print(f"DEBUG create_sales_over_time_plot: x_values[:3]={x_values[:3]}, y_values[:3]={y_values[:3]}")
+    
     fig = go.Figure()
     fig.add_trace(go.Scatter(
-        x=grouped_data['plot_date'],
-        y=grouped_data['plot_amount'],
+        x=x_values,
+        y=y_values,
         mode='lines+markers',
         name='Продажи'
     ))
@@ -82,7 +80,7 @@ def create_city_sales_plot(df: pd.DataFrame, lang: str = 'русский') -> ob
         Объект Plotly с графиком
     """
     # Агрегирование данных по городам
-    city_sales = df.groupby('Город')['Сумма'].agg('sum').reset_index()
+    city_sales = df.groupby('Город')['Сумма'].sum().reset_index()
     city_sales = city_sales.sort_values('Сумма', ascending=False)
     
     # Переводы для графика
@@ -94,7 +92,12 @@ def create_city_sales_plot(df: pd.DataFrame, lang: str = 'русский') -> ob
     
     selected_title = titles.get(lang, titles['русский'])
     
-    # Создание столбчатого графика
+    # Импортируем plotly.express внутри функции
+    try:
+        import plotly.express as px
+    except ImportError:
+        px = None
+    
     if px is None:
         st.error("Plotly не установлен. Пожалуйста, установите plotly для использования этой функции.")
         return None
@@ -127,9 +130,6 @@ def create_day_of_week_plot(df: pd.DataFrame, lang: str = 'русский') -> o
     Returns:
         Объект Plotly с графиком
     """
-    print(f"DEBUG create_day_of_week_plot: входящий DataFrame - {len(df)} строк, колонки: {list(df.columns)}")
-    print(f"Пример входных данных: {df[['Дата', 'Сумма']].head()}")
-    
     # Создаем копию DataFrame для безопасности
     df_copy = df.copy()
     
@@ -169,7 +169,6 @@ def create_day_of_week_plot(df: pd.DataFrame, lang: str = 'русский') -> o
     # Добавляем колонку с днями недели
     df_copy['day_of_week_eng'] = df_copy['Дата'].dt.day_name()
     df_copy['day_of_week_local'] = df_copy['day_of_week_eng'].map(selected_mapping)
-    print(f"DEBUG: пример сопоставления дней недели: {df_copy[['Дата', 'day_of_week_eng', 'day_of_week_local', 'Сумма']].head()}")
     
     # Создаем полный список дней недели в правильном порядке
     ordered_days = [
@@ -183,13 +182,19 @@ def create_day_of_week_plot(df: pd.DataFrame, lang: str = 'русский') -> o
     ]
     
     # Группируем по дням недели и суммируем продажи
-    grouped_by_day = df_copy.groupby('day_of_week_local')['Сумма'].agg('sum')
-    print(f"DEBUG: результат groupby до reindex - {len(grouped_by_day)} строк: {grouped_by_day}")
+    # Используем агрегацию с явным указанием операции
+    grouped_by_day = df_copy.groupby('day_of_week_local', sort=False)['Сумма'].sum()
     
-    # Используем reindex для правильного порядка дней недели
-    dow_sales = grouped_by_day.reindex(ordered_days, fill_value=0).reset_index()
-    dow_sales = dow_sales.rename(columns={'day_of_week_local': 'plot_day', 'Сумма': 'plot_amount'})
-    print(f"DEBUG: результат после reindex - {len(dow_sales)} строк, пример: {dow_sales}")
+    # Создаем итоговый DataFrame с правильным порядком дней недели
+    result_data = []
+    for day in ordered_days:
+        amount = grouped_by_day.get(day, 0)  # Если день отсутствует, используем 0
+        result_data.append({'plot_day': day, 'plot_amount': amount})
+    
+    dow_sales = pd.DataFrame(result_data)
+    
+    # ВАЖНО: Проверяем, что данные содержат правильные значения
+    print(f"DEBUG create_day_of_week_plot: кол-во строк={len(dow_sales)}, значения plot_amount={dow_sales['plot_amount'].tolist()}")
     
     # Переводы для графика
     titles = {
@@ -205,10 +210,16 @@ def create_day_of_week_plot(df: pd.DataFrame, lang: str = 'русский') -> o
         st.error("Plotly не установлен. Пожалуйста, установите plotly для использования этой функции.")
         return None
     
+    # ВАЖНО: Убедимся, что передаем правильные массивы данных
+    x_values = dow_sales['plot_day'].tolist()
+    y_values = dow_sales['plot_amount'].tolist()
+    
+    print(f"DEBUG create_day_of_week_plot: x_values={x_values}, y_values={y_values}")
+    
     fig = go.Figure()
     fig.add_trace(go.Bar(
-        x=dow_sales['plot_day'],
-        y=dow_sales['plot_amount'],
+        x=x_values,
+        y=y_values,
         name='Продажи'
     ))
     
