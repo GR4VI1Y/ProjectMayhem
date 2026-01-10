@@ -383,9 +383,9 @@ if df is not None:
     else:
         currency = 'RUB'  # Устанавливаем значение по умолчанию
     
-    col1.metric(get_text(language, 'total_sales'), f"{total_sales:,.2f}".replace(',', ' ') + f" {currency}")
-    col2.metric(get_text(language, 'avg_daily_sales'), f"{avg_daily_sales:,.2f}".replace(',', ' ') + f" {currency}")
-    col3.metric(get_text(language, 'max_daily_sales'), f"{max_daily_sales:,.2f}".replace(',', ' ') + f" {currency}")
+    col1.metric(get_text(language, 'total_sales'), f"{total_sales:,.2f}".replace(',', ' '), f"{currency}")
+    col2.metric(get_text(language, 'avg_daily_sales'), f"{avg_daily_sales:,.2f}".replace(',', ' '), f"{currency}")
+    col3.metric(get_text(language, 'max_daily_sales'), f"{max_daily_sales:,.2f}".replace(',', ' '), f"{currency}")
 
     # Фильтрация данных по городу для всего периода (независимо от даты)
     all_period_filtered = df.copy()
@@ -404,9 +404,9 @@ if df is not None:
     else:
         currency_all = 'RUB'  # Устанавливаем значение по умолчанию
     
-    col4.metric(get_text(language, 'total_sales'), f"{total_all_period:,.2f}".replace(',', ' ') + f" {currency_all}")
-    col5.metric(get_text(language, 'avg_daily_sales'), f"{avg_all_period:,.2f}".replace(',', ' ') + f" {currency_all}")
-    col6.metric(get_text(language, 'max_daily_sales'), f"{max_all_period:,.2f}".replace(',', ' ') + f" {currency_all}")
+    col4.metric(get_text(language, 'total_sales'), f"{total_all_period:,.2f}".replace(',', ' '), f"{currency_all}")
+    col5.metric(get_text(language, 'avg_daily_sales'), f"{avg_all_period:,.2f}".replace(',', ' '), f"{currency_all}")
+    col6.metric(get_text(language, 'max_daily_sales'), f"{max_all_period:,.2f}".replace(',', ' '), f"{currency_all}")
 
     # Визуализация данных
     if filtered_df.empty:
