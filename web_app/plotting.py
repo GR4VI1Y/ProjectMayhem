@@ -28,10 +28,10 @@ def create_sales_over_time_plot(df: pd.DataFrame, lang: str = 'русский') 
     daily_sales_sorted = daily_sales_grouped.sort_values('Дата').reset_index(drop=True)
     
     # Проверяем результат агрегации
-    print(f"DEBUG create_sales_over_time_plot: Результат агрегации - строки: {len(daily_sales_sorted)}, пример значений:")
-    print(daily_sales_sorted.head())
-    print(f"Типы данных: {daily_sales_sorted.dtypes}")
-    print(f"Колонки: {daily_sales_sorted.columns.tolist()}")
+    # print(f"DEBUG create_sales_over_time_plot: Результат агрегации - строки: {len(daily_sales_sorted)}, пример значений:")
+    # print(daily_sales_sorted.head())
+    # print(f"Типы данных: {daily_sales_sorted.dtypes}")
+    # print(f"Колонки: {daily_sales_sorted.columns.tolist()}")
     
     # Переводы для графика
     titles = {
@@ -194,11 +194,12 @@ def create_day_of_week_plot(df: pd.DataFrame, lang: str = 'русский') -> o
     # Сортируем по порядку дней недели, заполняя отсутствующие дни нулями
     dow_sales_grouped = dow_sales_grouped.set_index('ДеньНеделиЛок').reindex(ordered_days, fill_value=0).reset_index()
     dow_sales_grouped.columns = ['ДеньНеделиЛок', 'Сумма']
-    print(f"DEBUG create_day_of_week_plot: Результат агрегации - строки: {len(dow_sales_clean)}, пример значений:")
-    print(dow_sales_clean.head())
-    print(f"Типы данных: {dow_sales_clean.dtypes}")
-    print(f"Колонки: {dow_sales_clean.columns.tolist()}")
     dow_sales_clean = dow_sales_grouped  # Убираем dropna, так как теперь все дни присутствуют
+    
+    # print(f"DEBUG create_day_of_week_plot: Результат агрегации - строки: {len(dow_sales_clean)}, пример значений:")
+    # print(dow_sales_clean.head())
+    # print(f"Типы данных: {dow_sales_clean.dtypes}")
+    # print(f"Колонки: {dow_sales_clean.columns.tolist()}")
     
     # Переводы для графика
     titles = {
