@@ -16,8 +16,12 @@ def create_sales_over_time_plot(df: pd.DataFrame, lang: str = 'русский') 
     Returns:
         Объект Plotly с графиком
     """
-    # Агрегирование данных по датам
-    daily_sales = df.groupby(df['Дата'].dt.date)['Сумма'].sum().reset_index()
+    # Преобразуем дату в формат date и агрегируем данные по датам
+    df_for_aggregation = df.copy()
+    df_for_aggregation['Дата_для_группировки'] = df_for_aggregation['Дата'].dt.date
+    
+    # Агрегирование данных по датам с суммированием продаж
+    daily_sales = df_for_aggregation.groupby('Дата_для_группировки')['Сумма'].sum().reset_index()
     daily_sales.columns = ['Дата', 'Сумма']
     
     # Убедимся, что дата отсортирована по возрастанию для правильного отображения графика
