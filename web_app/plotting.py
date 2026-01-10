@@ -46,6 +46,9 @@ def create_sales_over_time_plot(df: pd.DataFrame, lang: str = 'русский') 
         markers=True
     )
     
+    # Убедимся, что график использует только предоставленные значения, без дополнительной агрегации
+    fig.update_traces(mode='lines+markers')
+    
     # Настройка внешнего вида графика
     fig.update_layout(
         xaxis_title=selected_lang['x_axis'],
