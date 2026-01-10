@@ -374,8 +374,7 @@ if df is not None:
         # Если данных нет, устанавливаем значения по умолчанию
         total_all_period, avg_all_period, max_all_period = 0, 0, 0
 
-    # Отображение KPI метрик для выбранного периода
-    col1, col2, col3 = st.columns(3)
+    # Отображение KPI метрик для выбранного периода с использованием CSS Grid для выравнивания
     # Получаем валюту из данных (предполагаем, что все записи в выбранном периоде имеют одинаковую валюту)
     # Проверяем, существует ли колонка 'Валюта' перед обращением к ней
     if 'Валюта' in filtered_df.columns and not filtered_df.empty:
@@ -383,12 +382,25 @@ if df is not None:
     else:
         currency = 'RUB'  # Устанавливаем значение по умолчанию
     
-    # Отображаем метрики без стрелок, только значение и валюта под ним, с выравниванием
-    col1.write(f"<div style='text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 120px;'><h4 style='margin: 0 10px 0; font-size: 16px;'>{get_text(language, 'total_sales')}</h4><div style='font-size: 24px; font-weight: bold; margin: 5px 0; flex-grow: 1; display: flex; align-items: center; justify-content: center;'>{f'{total_sales:,.2f}'.replace(',', ' ')}</div><div style='color: green; font-size: 16px; margin-top: 5px;'>{currency}</div></div>", unsafe_allow_html=True)
-    
-    col2.write(f"<div style='text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 120px;'><h4 style='margin: 0 0 10px 0; font-size: 16px;'>{get_text(language, 'avg_daily_sales')}</h4><div style='font-size: 24px; font-weight: bold; margin: 5px 0; flex-grow: 1; display: flex; align-items: center; justify-content: center;'>{f'{avg_daily_sales:,.2f}'.replace(',', ' ')}</div><div style='color: green; font-size: 16px; margin-top: 5px;'>{currency}</div></div>", unsafe_allow_html=True)
-    
-    col3.write(f"<div style='text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 120px;'><h4 style='margin: 0 0 10px 0; font-size: 16px;'>{get_text(language, 'max_daily_sales')}</h4><div style='font-size: 24px; font-weight: bold; margin: 5px 0; flex-grow: 1; display: flex; align-items: center; justify-content: center;'>{f'{max_daily_sales:,.2f}'.replace(',', ' ')}</div><div style='color: green; font-size: 16px; margin-top: 5px;'>{currency}</div></div>", unsafe_allow_html=True)
+    # Создаем контейнер с CSS Grid для выравнивания метрик
+    st.markdown(f"""
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+        <div style="text-align: center; border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; background-color: #f9f9f9;">
+            <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; height: 3em; display: flex; align-items: center; justify-content: center;">{get_text(language, 'total_sales')}</div>
+            <div style="font-size: 24px; font-weight: bold; margin: 10px 0; color: #1f1f1f;">{f'{total_sales:,.2f}'.replace(',', ' ')}</div>
+            <div style="color: green; font-size: 16px; margin-top: 5px;">{currency}</div>
+        </div>
+        <div style="text-align: center; border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; background-color: #f9f9f9;">
+            <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; height: 3em; display: flex; align-items: center; justify-content: center;">{get_text(language, 'avg_daily_sales')}</div>
+            <div style="font-size: 24px; font-weight: bold; margin: 10px 0; color: #1f1f1f;">{f'{avg_daily_sales:,.2f}'.replace(',', ' ')}</div>
+            <div style="color: green; font-size: 16px; margin-top: 5px;">{currency}</div>
+        </div>
+        <div style="text-align: center; border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; background-color: #f9f9f9;">
+            <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; height: 3em; display: flex; align-items: center; justify-content: center;">{get_text(language, 'max_daily_sales')}</div>
+            <div style="font-size: 24px; font-weight: bold; margin: 10px 0; color: #1f1f1f;">{f'{max_daily_sales:,.2f}'.replace(',', ' ')}</div>
+            <div style="color: green; font-size: 16px; margin-top: 5px;">{currency}</div>
+        </div>
+    """, unsafe_allow_html=True)
 
     # Фильтрация данных по городу для всего периода (независимо от даты)
     all_period_filtered = df.copy()
@@ -398,21 +410,38 @@ if df is not None:
     # Вычисление KPI метрик для всего выгруженного периода (с учетом выбранного города)
     total_all_period, avg_all_period, max_all_period = calculate_kpi_metrics(all_period_filtered)
 
+    # Закрываем предыдущий div
+    st.markdown("</div>", unsafe_allow_html=True)
+    
     # Отображение KPI метрик для всего периода (с учетом выбранного города)
     st.subheader(get_text(language, 'period_data_header'))
-    col4, col5, col6 = st.columns(3)
+    
     # Проверяем, существует ли колонка 'Валюта' перед обращением к ней
     if 'Валюта' in all_period_filtered.columns and not all_period_filtered.empty:
         currency_all = all_period_filtered['Валюта'].iloc[0]
     else:
         currency_all = 'RUB'  # Устанавливаем значение по умолчанию
     
-    # Отображаем метрики без стрелок, только значение и валюта под ним, с выравниванием
-    col4.write(f"<div style='text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 120px;'><h4 style='margin: 0 10px 0; font-size: 16px;'>{get_text(language, 'total_sales')}</h4><div style='font-size: 24px; font-weight: bold; margin: 5px 0; flex-grow: 1; display: flex; align-items: center; justify-content: center;'>{f'{total_all_period:,.2f}'.replace(',', ' ')}</div><div style='color: green; font-size: 16px; margin-top: 5px;'>{currency_all}</div></div>", unsafe_allow_html=True)
-    
-    col5.write(f"<div style='text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 120px;'><h4 style='margin: 0 0 10px 0; font-size: 16px;'>{get_text(language, 'avg_daily_sales')}</h4><div style='font-size: 24px; font-weight: bold; margin: 5px 0; flex-grow: 1; display: flex; align-items: center; justify-content: center;'>{f'{avg_all_period:,.2f}'.replace(',', ' ')}</div><div style='color: green; font-size: 16px; margin-top: 5px;'>{currency_all}</div></div>", unsafe_allow_html=True)
-    
-    col6.write(f"<div style='text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 120px;'><h4 style='margin: 0 0 10px 0; font-size: 16px;'>{get_text(language, 'max_daily_sales')}</h4><div style='font-size: 24px; font-weight: bold; margin: 5px 0; flex-grow: 1; display: flex; align-items: center; justify-content: center;'>{f'{max_all_period:,.2f}'.replace(',', ' ')}</div><div style='color: green; font-size: 16px; margin-top: 5px;'>{currency_all}</div></div>", unsafe_allow_html=True)
+    # Создаем контейнер с CSS Grid для выравнивания метрик
+    st.markdown(f"""
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+        <div style="text-align: center; border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; background-color: #f9f9f9;">
+            <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; height: 3em; display: flex; align-items: center; justify-content: center;">{get_text(language, 'total_sales')}</div>
+            <div style="font-size: 24px; font-weight: bold; margin: 10px 0; color: #1f1f1f;">{f'{total_all_period:,.2f}'.replace(',', ' ')}</div>
+            <div style="color: green; font-size: 16px; margin-top: 5px;">{currency_all}</div>
+        </div>
+        <div style="text-align: center; border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; background-color: #f9f9f9;">
+            <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; height: 3em; display: flex; align-items: center; justify-content: center;">{get_text(language, 'avg_daily_sales')}</div>
+            <div style="font-size: 24px; font-weight: bold; margin: 10px 0; color: #1f1f1f;">{f'{avg_all_period:,.2f}'.replace(',', ' ')}</div>
+            <div style="color: green; font-size: 16px; margin-top: 5px;">{currency_all}</div>
+        </div>
+        <div style="text-align: center; border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; background-color: #f9f9f9;">
+            <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; height: 3em; display: flex; align-items: center; justify-content: center;">{get_text(language, 'max_daily_sales')}</div>
+            <div style="font-size: 24px; font-weight: bold; margin: 10px 0; color: #1f1f1f;">{f'{max_all_period:,.2f}'.replace(',', ' ')}</div>
+            <div style="color: green; font-size: 16px; margin-top: 5px;">{currency_all}</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
     # Визуализация данных
     if filtered_df.empty:
