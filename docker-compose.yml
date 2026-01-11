@@ -5,7 +5,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: web_app_container
+      tags:
+        - "streamlit_app:latest"
+    image: streamlit_app:latest
+    container_name: streamlit_app_container
     ports:
       - "8501:8501"
     volumes:
