@@ -2,12 +2,24 @@ version: '3.8'
 
 services:
   web-app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: web_app_container
     ports:
       - "8501:8501"
     volumes:
       - ./web_app:/app/web_app
       - ./app:/app/app
+      - ./data:/app/data  # Для возможности внешнего хранения данных
     environment:
       - PYTHONPATH=/app
+      - STREAMLIT_SERVER_ENABLE_CORS=false
+      - STREAMLIT_SERVER_ENABLE_XSRF_PROTECTION=false
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
