@@ -1,7 +1,19 @@
-name: Run Tests
+name: Run Application Tests
 
 on:
   workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+        - info
+        - warning
+        - debug
+      tags:
+        description: 'Test scenario tags'
 
 jobs:
   test:

@@ -1,7 +1,19 @@
-name: Deploy to Docker Hub
+name: Deploy Application to Docker Hub
 
 on:
   workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+        - info
+        - warning
+        - debug
+      tags:
+        description: 'Deploy scenario tags'
   push:
     branches: [ main ]
 
