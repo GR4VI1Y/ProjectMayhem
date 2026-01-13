@@ -31,13 +31,14 @@ def validate_and_normalize_columns(df):
         "Сумма": ["Amount", "Sum", "Total"]
     }
 
-    # Создаем словарь соответствий для поиска колонок (с учетом регистра)
-    col_lower_map = {col.lower(): col for col in df.columns}
-
     # Проверяем наличие колонок, учитывая возможные альтернативные названия
     missing_cols = []
     for req_col in required_columns:
         found = False
+        
+        # Создаем обновленный словарь соответствий колонок после strip()
+        col_lower_map = {col.lower(): col for col in df.columns}
+        
         # Проверяем основное название
         if req_col in df.columns:
             found = True
