@@ -42,11 +42,12 @@ def validate_and_normalize_columns(df):
         
         # Проверяем основное название (с учетом возможных пробельных символов)
         req_col_clean = req_col.strip().lower()
-        if req_col in df.columns or req_col_clean in [col.strip().lower() for col in df.columns]:
+        df_col_names_clean = [str(col).strip().lower() for col in df.columns]
+        if req_col in df.columns or req_col_clean in df_col_names_clean:
             # Найдем точное имя колонки в DataFrame
             for col in df.columns:
-                if col.strip().lower() == req_col_clean:
-                    if col != req_col:
+                if str(col).strip().lower() == req_col_clean:
+                    if str(col) != req_col:
                         df.rename(columns={col: req_col}, inplace=True)
                     found = True
                     break
@@ -117,7 +118,12 @@ def load_data(file_path: str = "web_app/data/dataset_1.xlsx") -> pd.DataFrame:
     """
     try:
         # Загрузка данных из Excel файла
-        df = pd.read_excel(file_path)
+        # Сначала получим список листов, чтобы обработать возможные варианты
+        excel_file = pd.ExcelFile(file_path)
+        sheet_names = excel_file.sheet_names
+        
+        # Читаем первый лист Excel файла
+        df = pd.read_excel(file_path, sheet_name=sheet_names[0], header=0)  # Убедимся, что первая строка используется как заголовок
 
         # Преобразование колонки 'Дата' в формат datetime
         df["Дата"] = pd.to_datetime(df["Дата"])
