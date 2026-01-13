@@ -96,7 +96,7 @@ def validate_and_normalize_columns(df):
 
 
 @st.cache_data
-def load_data(file_path: str = "app/dataset_1.xlsx") -> pd.DataFrame:
+def load_data(file_path: str = "web_app/data/dataset_1.xlsx") -> pd.DataFrame:
     """
     Загружает и кэширует данные из Excel файла.
 
@@ -121,7 +121,7 @@ def load_data(file_path: str = "app/dataset_1.xlsx") -> pd.DataFrame:
         return df
     except FileNotFoundError:
         error_msg = (
-            f"Файл {file_path} не найден. " "Пожалуйста, проверьте наличие файла."
+            f"Файл {file_path} не найден. " "Пожалуйста, проверьте наличие файла в папке web_app/data или загрузите свой файл."
         )
         st.error(error_msg)
         return None

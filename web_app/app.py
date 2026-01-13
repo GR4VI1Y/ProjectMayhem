@@ -27,7 +27,7 @@ def get_text(lang, key):
             'selected_period_sales': 'Данные по выбранному периоду',
             'all_period_sales': 'Данные по всему периоду',
             'note_faq': 'Часто задаваемые вопросы находятся на отдельной странице \'FAQ\', доступной через боковое меню.',
-            'error_file_not_found': 'Не удалось загрузить данные. Пожалуйста, проверьте наличие файла dataset_1.xlsx в папке app или загрузите свой файл.',
+            'error_file_not_found': 'Не удалось загрузить данные. Пожалуйста, проверьте наличие файла dataset_1.xlsx в папке web_app/data или загрузите свой файл.',
             'error_missing_columns': 'Файл данных должен содержать следующие колонки: {}',
             'error_invalid_file': 'Поддерживаются только файлы CSV и Excel (.xlsx, .xls)',
             'select_city': 'Выберите город',
@@ -97,7 +97,7 @@ def get_text(lang, key):
             'selected_period_sales': 'Data for Selected Period',
             'all_period_sales': 'Data for Entire Period',
             'note_faq': 'Frequently asked questions are on a separate \'FAQ\' page accessible through the sidebar menu.',
-            'error_file_not_found': 'Failed to load data. Please check if dataset_1.xlsx file exists in the app folder or upload your own file.',
+            'error_file_not_found': 'Failed to load data. Please check if dataset_1.xlsx file exists in the web_app/data folder or upload your own file.',
             'error_missing_columns': 'Data file must contain the following columns: {}',
             'error_invalid_file': 'Only CSV and Excel (.xlsx, .xls) files are supported',
             'select_city': 'Select City',
@@ -167,7 +167,7 @@ def get_text(lang, key):
             'selected_period_sales': '选定期间的数据',
             'all_period_sales': '整个期间的数据',
             'note_faq': '常见问题在单独的"FAQ"页面上，可通过侧边栏菜单访问。',
-            'error_file_not_found': '无法加载数据。请检查app文件夹中是否存在dataset_1.xlsx文件或上传自己的文件。',
+            'error_file_not_found': '无法加载数据。请检查web_app/data文件夹中是否存在dataset_1.xlsx文件或上传自己的文件。',
             'error_missing_columns': '数据文件必须包含以下列：{}',
             'error_invalid_file': '仅支持CSV和Excel（.xlsx，.xls）文件',
             'select_city': '选择城市',
@@ -250,7 +250,7 @@ if uploaded_file is not None:
     if df is not None:
         st.sidebar.success(get_text(language, 'upload_success'))
 else:
-    df = load_data("app/dataset_1.xlsx")
+    df = load_data("web_app/data/dataset_1.xlsx")
     
 # Проверка структуры данных
 if df is not None and not df.empty:
