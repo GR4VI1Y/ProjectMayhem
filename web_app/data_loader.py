@@ -6,8 +6,8 @@ def validate_and_normalize_columns(df):
     """
     Проверяет и нормализует названия колонок в DataFrame
     """
-    # Нормализация названий колонок (удаление пробелов)
-    df.columns = df.columns.str.strip()
+    # Нормализация названий колонок (удаление пробелов и других пробельных символов)
+    df.columns = df.columns.astype(str).str.strip()
 
     # Проверка на наличие минимально необходимых колонок для расчета KPI
     required_kpi_columns = ["Дата", "Сумма"]
@@ -37,11 +37,19 @@ def validate_and_normalize_columns(df):
         found = False
         
         # Создаем обновленный словарь соответствий колонок после strip()
-        col_lower_map = {col.lower(): col for col in df.columns}
+        # Используем более тщательную очистку названий колонок
+        col_lower_map = {col.lower().strip(): col for col in df.columns}
         
-        # Проверяем основное название
-        if req_col in df.columns:
-            found = True
+        # Проверяем основное название (с учетом возможных пробельных символов)
+        req_col_clean = req_col.strip().lower()
+        if req_col in df.columns or req_col_clean in [col.strip().lower() for col in df.columns]:
+            # Найдем точное имя колонки в DataFrame
+            for col in df.columns:
+                if col.strip().lower() == req_col_clean:
+                    if col != req_col:
+                        df.rename(columns={col: req_col}, inplace=True)
+                    found = True
+                    break
         else:
             # Проверяем альтернативные названия
             if req_col in alt_column_names:
